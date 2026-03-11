@@ -55,7 +55,7 @@ body.login-page {
     border: 1px solid rgba(255,255,255,0.25);
 }
 
-.login-container h2 {
+.login-container h2{
     margin-top: 0;
     text-align: center;
 }
@@ -99,4 +99,20 @@ body.login-page {
     background: linear-gradient(135deg,#0060aa,#0090dd);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
+.password-box {
+    position: relative;
+}
+
+.password-box input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 }

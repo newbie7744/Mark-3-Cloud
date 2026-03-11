@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8" />
-    <title>Selfhosted Personal AI Cloud</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- page-specific style in stylesheet -->
+<!DOCTYPE html>                                                              <!-- this tells the browser to use latest html5 -->
+<html lang="en">                                                             <!-- this line defines language and entire html inside of it-->
+<head>                                                                       <!-- this will have all those tage namely title,meta,style -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   <!-- this is for overall page responsiveness regardless of device -->
+    <meta charset="UTF-8" />                                                 <!-- this is for Declare encoding UTF-8 supports Most Languages and Emojis -->
+    <title>Selfhosted Personal AI Cloud</title>                              <!-- this is the title of the page that appears in the browser tab -->
+    <link rel="stylesheet" href="style.css">                                 <!-- this is for linking the external css file to style the page -->       
+    <script src="javascript/login.js"></script>
 </head>
 <body class="login-page">
     <div class="login-container">
@@ -14,7 +14,11 @@
             <label for="username">Email or Username</label>
             <input type="text" id="username" name="username" placeholder="Enter Username" required />
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter Password" required />
+
+<div class="password-box">
+    <input type="password" id="password" name="password" placeholder="Enter Password" required />
+    <span class="toggle-password" onclick="togglePassword()">👁</span>
+</div>
             <button type="submit">Login</button>
         </form>
     </div>
