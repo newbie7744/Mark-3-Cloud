@@ -14,45 +14,43 @@ Backend: Flask (Python)
 Database: PostgreSQL
 Hardware: Raspberry Pi 4
 
-Mark-3-Cloud Folder Structure
+## MARK-3 Cloud – Project Structure
+
+```
+Mark-3-Cloud
 │
 ├── Frontend
-│   │
 │   ├── index.html              # Login page
 │   ├── style.css               # Main stylesheet
 │   │
 │   ├── js
-│   │   └── login.js            # Password toggle / login JS
+│   │   └── login.js            # Password toggle JS
 │   │
 │   └── images
 │       └── login.jpg           # Background image
 │
 ├── Backend
-│   │
-│   ├── app.py                  # Main server using Flask
+│   ├── app.py                  # Flask server
 │   ├── routes.py               # Login / upload routes
 │   └── requirements.txt        # Python dependencies
 │
 ├── Database
-│   │
-│   ├── schema.sql              # Tables for users/files
+│   ├── schema.sql              # Tables
 │   └── db_connect.py           # PostgreSQL connection
 │
 ├── AI-Module
-│   │
-│   ├── object_detection.py     # Image recognition
-│   └── model_loader.py         # Loads AI model
+│   ├── object_detection.py
+│   └── model_loader.py
 │
 ├── Storage
-│   │
-│   └── uploads                 # Uploaded user files
+│   └── uploads
 │
 ├── Docs
-│   │
-│   ├── architecture.png        # System architecture diagram
-│   ├── flowchart.png           # Flowchart you made
-│   └── report                  # Project report files
+│   ├── architecture.png
+│   ├── flowchart.png
+│   └── report
 │
-├── README.md                   # Project explanation
-├── .gitignore                  # Ignore unnecessary files
-└── LICENSE                     # Optional
+├── README.md
+├── .gitignore
+└── LICENSE
+```
