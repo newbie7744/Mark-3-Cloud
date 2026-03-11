@@ -1,0 +1,86 @@
+/* style.css */
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    /* use your own path/filename */
+    background: url('images/login.jpg') no-repeat center center fixed;
+    background-size: cover;
+
+    /* turn on the animation */
+    animation: bg‑scroll 20s linear infinite;
+}
+
+/* move the background from left to right (you can tweak the
+   properties or add more keyframes) */
+@keyframes bg‑scroll {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* alternative: fade/hue‑rotate */
+/*
+@keyframes bg‑fade {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+body { animation: bg‑fade 30s linear infinite; }
+*/
+
+/* ---------- login glass theme ---------- */
+body.login-page {
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;   /* ensure full viewport height when using class */
+    margin: 0;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    padding: 2rem;
+    width: 320px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.login-container h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.login-container label {
+    display: block;
+    margin: 0.5rem 0 0.25rem;
+    font-size: 0.9rem;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 0.6rem;
+    background: #0078d4;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.login-container button:hover {
+    background: #005a9e;
+}
