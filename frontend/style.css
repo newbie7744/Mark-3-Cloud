@@ -1,12 +1,9 @@
-/* style.css */
-
 html, body {
     height: 100%;
     margin: 0;
 }
 
-body {
-    /* use your own path/filename */
+body.login-page {
     background: url('images/login.jpg') no-repeat center center fixed;
     background-size: cover;
 
@@ -14,30 +11,18 @@ body {
     animation: bg‑scroll 20s linear infinite;
 }
 
-/* move the background from left to right (you can tweak the
-   properties or add more keyframes) */
 @keyframes bg‑scroll {
     0%   { background-position: 0% 50%; }
     50%  { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* alternative: fade/hue‑rotate */
-/*
-@keyframes bg‑fade {
-    0%   { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-body { animation: bg‑fade 30s linear infinite; }
-*/
-
-/* ---------- login glass theme ---------- */
 body.login-page {
     font-family: Arial, sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;   /* ensure full viewport height when using class */
+    height: 100vh;
     margin: 0;
 }
 
@@ -115,4 +100,81 @@ body.login-page {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+}
+/* DASHBOARD PAGE */
+
+.dashboard-page {
+    font-family: Arial, sans-serif;
+    display: flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width: 220px;
+    height: 100vh;
+    background: #1e293b;
+    color: white;
+    padding-top: 20px;
+    position: fixed;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.sidebar ul{
+    list-style:none;
+    padding:0;
+}
+
+.sidebar li{
+    padding:15px;
+    text-align:center;
+}
+
+.sidebar a{
+    color:white;
+    text-decoration:none;
+}
+
+.sidebar li:hover{
+    background:#334155;
+}
+
+/* MAIN CONTENT */
+
+.main-content{
+    margin-left:220px;
+    width:100%;
+}
+
+/* TOP BAR */
+
+.topbar{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding:15px;
+    background:#f5f5f5;
+}
+
+/* PROFILE */
+
+.profile{
+    text-align:center;
+    margin-left:20px;
+}
+
+.profile img{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+}
+
+/* CONTENT */
+
+.content{
+    padding:20px;
 }

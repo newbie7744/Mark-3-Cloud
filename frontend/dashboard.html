@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Dashboard</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="dashboard-page">
+<script src="javascript/dashboard.js"></script>
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h2 class="logo">AI Cloud</h2>
+
+    <ul>
+        <li><a href="#myfiles">My Files</a></li>
+        <li><a href="#upload">Upload Files</a></li>
+        <li><a href="#aidetection">AI Detection</a></li>
+        <li><a href="login.html">Logout</a></li>
+    </ul>
+
+</div>
+
+<!-- MAIN AREA -->
+<div class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+
+        <div class="datetime">
+            <span id="date"></span><br>
+            <span id="time"></span>
+        </div>
+
+        <div class="profile">
+            <img src="images/profile.png" alt="Profile">
+            <p>User</p>
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <section id="upload">
+            <h3>Upload Files</h3>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Upload</button>
+            </form>
+        </section>
+
+        <section id="myfiles">
+            <h3>My Files</h3>
+            <ul id="fileList"></ul>
+        </section>
+
+        <section id="aidetection">
+            <h3>AI Image Detection</h3>
+            <form action="/detect" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" accept="image/*" required>
+                <button type="submit">Detect</button>
+            </form>
+        </section>
+
+    </div>
+
+</div>
+</body>
+</html>
