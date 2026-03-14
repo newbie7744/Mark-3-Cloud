@@ -1,30 +1,49 @@
+/* =====================================
+   GLOBAL SETTINGS (Used by all pages)
+   login.html
+   signup.html
+   dashboard.html
+===================================== */
+
 html, body {
     height: 100%;
     margin: 0;
+    font-family: Arial, sans-serif;
 }
 
-body.login-page {
-    background: url('images/login.jpg') no-repeat center center fixed;
-    background-size: cover;
 
-    /* turn on the animation */
-    animation: bg‑scroll 20s linear infinite;
-}
+/* =====================================
+   BACKGROUND ANIMATION
+   Used by: login.html & signup.html
+===================================== */
 
-@keyframes bg‑scroll {
+@keyframes bg-scroll {
     0%   { background-position: 0% 50%; }
     50%  { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
+
+/* =====================================
+   LOGIN PAGE BACKGROUND
+   Used only in: login.html
+===================================== */
+
 body.login-page {
-    font-family: Arial, sans-serif;
+    background: url('images/login.jpg') no-repeat center center fixed;
+    background-size: cover;
+    animation: bg-scroll 20s linear infinite;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
 }
+
+
+/* =====================================
+   LOGIN FORM CONTAINER
+   Used only in: login.html
+===================================== */
 
 .login-container {
     background: rgba(255, 255, 255, 0.18);
@@ -51,6 +70,12 @@ body.login-page {
     font-size: 0.9rem;
 }
 
+
+/* =====================================
+   LOGIN PAGE INPUT FIELDS
+   Used in: login.html
+===================================== */
+
 .login-container input {
     width: 100%;
     padding: 0.6rem;
@@ -62,6 +87,12 @@ body.login-page {
 
     background: rgba(255,255,255,0.6);
 }
+
+
+/* =====================================
+   LOGIN BUTTON
+   Used in: login.html
+===================================== */
 
 .login-container button {
     width: 100%;
@@ -85,13 +116,22 @@ body.login-page {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.25);
 }
+
+
+/* =====================================
+   PASSWORD TOGGLE COMPONENT
+   Used in: login.html & signup.html
+===================================== */
+
 .password-box {
     position: relative;
+    margin-bottom: 1rem;
 }
 
 .password-box input {
     width: 100%;
-    padding-right: 40px;
+    padding-right: 40px;   /* space for eye icon */
+    box-sizing: border-box;
 }
 
 .toggle-password {
@@ -101,14 +141,110 @@ body.login-page {
     transform: translateY(-50%);
     cursor: pointer;
 }
-/* DASHBOARD PAGE */
+
+
+/* =====================================
+   SIGNUP PAGE BACKGROUND
+   Used only in: signup.html
+===================================== */
+
+body.signup-page {
+    background: url('images/login.jpg') no-repeat center center fixed;
+    background-size: cover;
+    animation: bg-scroll 20s linear infinite;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =====================================
+   SIGNUP FORM CONTAINER
+   Used only in: signup.html
+===================================== */
+
+.signup-container {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: 2rem;
+    width: 320px;
+
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+
+/* =====================================
+   SIGNUP FORM LAYOUT
+   Used in: signup.html
+===================================== */
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+
+    border-radius: 8px;
+    border: none;
+
+    background: rgba(255,255,255,0.6);
+}
+
+
+/* =====================================
+   SIGNUP BUTTON
+   Used in: signup.html
+===================================== */
+
+.signup-button {
+    width: 100%;
+    padding: 0.7rem;
+
+    background: linear-gradient(135deg,#a1b1bd,#00aaff);
+
+    border: none;
+    color: white;
+
+    border-radius: 12px;
+    cursor: pointer;
+
+    font-size: 1rem;
+
+    transition: all 0.25s ease;
+}
+
+.signup-button:hover {
+    background: linear-gradient(135deg,#0060aa,#0090dd);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
+
+
+/* =====================================
+   DASHBOARD PAGE LAYOUT
+   Used only in: dashboard.html
+===================================== */
 
 .dashboard-page {
-    font-family: Arial, sans-serif;
     display: flex;
 }
 
-/* SIDEBAR */
+
+/* =====================================
+   DASHBOARD SIDEBAR
+   Used in: dashboard.html
+===================================== */
 
 .sidebar{
     width: 220px;
@@ -143,14 +279,22 @@ body.login-page {
     background:#334155;
 }
 
-/* MAIN CONTENT */
+
+/* =====================================
+   DASHBOARD MAIN CONTENT AREA
+   Used in: dashboard.html
+===================================== */
 
 .main-content{
     margin-left:220px;
     width:100%;
 }
 
-/* TOP BAR */
+
+/* =====================================
+   DASHBOARD TOP BAR
+   Used in: dashboard.html
+===================================== */
 
 .topbar{
     display:flex;
@@ -160,7 +304,11 @@ body.login-page {
     background:#f5f5f5;
 }
 
-/* PROFILE */
+
+/* =====================================
+   USER PROFILE SECTION
+   Used in: dashboard.html
+===================================== */
 
 .profile{
     text-align:center;
@@ -173,7 +321,11 @@ body.login-page {
     border-radius:50%;
 }
 
-/* CONTENT */
+
+/* =====================================
+   DASHBOARD CONTENT AREA
+   Used in: dashboard.html
+===================================== */
 
 .content{
     padding:20px;
