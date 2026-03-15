@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Signup</title>
+    <script src="{{ url_for('static', filename='js/password.js') }}"></script>
+</head>
+<body class="signup-page">
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form class="signup-form" action="/signup" method="POST" enctype="multipart/form-data">
+            <!-- Name input -->
+            <input type="text" class="signup-input" name="username" placeholder="Full Name" required>
+
+            <!-- Email input -->
+            <input type="email" class="signup-input" name="email" placeholder="Email ID (will be used to login)" required>
+
+            <!-- Profile picture upload -->
+            <input type="file" name="profile_pic" accept="image/*" class="signup-input">
+
+            <!-- Password input -->
+            <div class="password-box">
+                <input type="password" id="password" class="signup-input" name="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePassword('password')">👁</span>
+            </div>
+
+            <!-- Retype password input -->
+            <div class="password-box">
+                <input type="password" id="repassword" class="signup-input" name="retype-password" placeholder="Retype Password" required>
+                <span class="toggle-password" onclick="togglePassword('repassword')">👁</span>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="signup-button">Sign Up</button>
+            <p>Already have an account? <a href="/">Login with your email</a></p>
+        </form>
+    </div>
+</body>
+</html>
