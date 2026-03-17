@@ -366,3 +366,124 @@ body.signup-page {
 .content{
     padding:20px;
 }
+
+/* Error message */
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* Fix Remember Me alignment */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+/* Override global input style ONLY for checkbox */
+.remember-me input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    transform: scale(1.1); /* optional: slightly bigger */
+    cursor: pointer;
+}
+
+/* =====================================
+   FILE GRID (My Files UI)
+===================================== */
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+
+/* =====================================
+   FILE CARD
+===================================== */
+
+.file-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.2s ease;
+}
+
+.file-card:hover {
+    transform: translateY(-5px);
+}
+
+
+/* =====================================
+   IMAGE PREVIEW
+===================================== */
+
+.file-preview {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+
+/* =====================================
+   FILE ICON
+===================================== */
+
+.file-icon {
+    font-size: 50px;
+    margin: 20px 0;
+}
+
+
+/* =====================================
+   FILE NAME
+===================================== */
+
+.file-name {
+    font-size: 0.9rem;
+    margin: 5px 0;
+    word-break: break-all;
+}
+
+
+/* =====================================
+   FILE ACTION BUTTONS
+===================================== */
+
+.file-actions a {
+    margin: 5px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+
+/* =====================================
+   PROGRESS BAR
+===================================== */
+
+.progress-container {
+    width: 100%;
+    background: #ddd;
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+#progressBar {
+    width: 0%;
+    height: 25px;
+    background: #00aaff;
+    color: white;
+    text-align: center;
+    line-height: 25px;
+    border-radius: 10px;
+    transition: width 0.2s;
+}

@@ -1,6 +1,8 @@
 from . import db
+from flask_login import UserMixin
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -11,3 +13,17 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
 
     profile_pic = db.Column(db.String(200))
+
+    # ✅ relationship to files
+    files = db.relationship("File", backref="user", lazy=True)
+
+
+class File(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    filename = db.Column(db.String(200), nullable=False)
+
+    filepath = db.Column(db.String(300), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

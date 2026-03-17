@@ -1,30 +1,74 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Selfhosted Personal AI Cloud</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='js/password.js') }}"></script>
+
+```
+<!-- External CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<!-- JS -->
+<script src="{{ url_for('static', filename='js/password.js') }}"></script>
+```
+
 </head>
+
 <body class="login-page">
     <div class="login-container">
-        <form action="/" method="POST">
-            <h2>Sign In</h2>
+        <form action="{{ url_for('main.login') }}" method="POST">
 
-            <!-- Use email only -->
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter Email (used to login)" required />
+```
+        <h2>Sign In</h2>
 
-            <label for="password">Password</label>
-            <div class="password-box">
-                <input type="password" id="password" name="password" placeholder="Enter Password" required />
-                <span class="toggle-password" onclick="togglePassword('password')">👁</span>
-            </div>
+        <!-- Error Message -->
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
 
-            <button type="submit">Login</button>
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
-        </form>
-    </div>
+        <!-- Email -->
+        <label for="email">Email</label>
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Enter Email" 
+            required 
+            autofocus
+        />
+
+        <!-- Password -->
+        <label for="password">Password</label>
+        <div class="password-box">
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="Enter Password" 
+                required 
+            />
+            <span class="toggle-password" onclick="togglePassword('password')">👁</span>
+        </div>
+
+        <!-- Remember Me -->
+        <label class="remember-me">
+            <input type="checkbox" name="remember"> Remember Me
+        </label>
+
+        <!-- Submit -->
+        <button type="submit">Login</button>
+
+        <!-- Signup -->
+        <p>
+            Don't have an account? 
+            <a href="{{ url_for('main.signup') }}">Sign up</a>
+        </p>
+
+    </form>
+</div>
+```
+
 </body>
 </html>
