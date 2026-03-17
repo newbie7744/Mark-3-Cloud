@@ -118,3 +118,7 @@ dmypy.json
 .cursorindexingignore
 .env
 .envrc
+
+# Ignore all uploaded files
+app/static/uploads/*
+!app/static/uploads/.gitkeep
