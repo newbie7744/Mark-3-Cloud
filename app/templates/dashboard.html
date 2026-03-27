@@ -6,7 +6,7 @@
 <title>Cloud Dashboard</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
 </head>
 
 <body class="dashboard-page">
@@ -15,9 +15,9 @@
 <div class="sidebar">
     <h2 class="logo">AI Cloud</h2>
     <ul>
-        <li><a href="{{ url_for('main.dashboard') }}">My Files</a></li>
-        <li><a href="{{ url_for('main.upload_page') }}">Upload Files</a></li>
-        <li><a href="{{ url_for('main.ai_detection_page') }}">AI Detection</a></li>
+        <li class="{{ 'active' if active == 'myfiles' else '' }}"><a href="{{ url_for('main.dashboard') }}">My Files</a></li>
+        <li class="{{ 'active' if active == 'upload' else '' }}"><a href="{{ url_for('main.upload_page') }}">Upload Files</a></li>
+        <li class="{{ 'active' if active == 'ai_detection' else '' }}"><a href="{{ url_for('main.ai_detection_page') }}">AI Detection</a></li>
         <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
     </ul>
 </div>
@@ -32,23 +32,23 @@
             <span id="time"></span>
         </div>
 
-        <!-- PROFILE -->
         <div class="profile">
             {% if current_user.is_authenticated %}
-                <img src="{{ url_for('static', filename='uploads/' ~ (current_user.profile_pic or 'profile.png')) }}" alt="Profile">
+                <img src="{{ url_for('static', filename='uploads/' ~ (current_user.profile_pic or 'profile.png')) }}" alt="Profile Picture">
                 <p>{{ current_user.username }}</p>
 
-                <!-- PROFILE SETTINGS -->
-                <div class="profile-settings">
+                <button type="button" class="profile-menu-btn">⋮</button>
+                <div class="profile-menu-content">
+                    <a href="#" onclick="toggleChangeForm()">Change Profile</a>
+                </div>
+
+                <div class="profile-edit-form">
                     <form action="{{ url_for('main.update_profile') }}" method="POST" enctype="multipart/form-data">
-                        <input type="text" name="username" placeholder="New Username" value="{{ current_user.username }}" required>
+                        <input type="text" name="username" value="{{ current_user.username }}" required>
                         <input type="file" name="profile_pic" accept="image/*">
-                        <button type="submit">Update Profile</button>
+                        <button type="submit">Update</button>
                     </form>
                 </div>
-            {% else %}
-                <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile">
-                <p>User</p>
             {% endif %}
         </div>
     </div>
@@ -56,88 +56,81 @@
     <!-- CONTENT -->
     <div class="content">
 
-        <!-- ===================== -->
-        <!-- MY FILES SECTION -->
-        <!-- ===================== -->
-        {% if active == "myfiles" %}
-        <section id="myfiles">
-            <h3>My Files</h3>
+    <!-- MY FILES SECTION -->
+    {% if active == "myfiles" %}
+    <section id="myfiles">
+        <h3>My Files</h3>
 
-<div class="file-grid">
-{% for file in files %}
+        <div class="file-grid">
+        {% for file in files %}
+        <div class="file-card">
 
-    <div class="file-card">
+            {% set ext = file.filename.split('.')[-1].lower() %}
+            {% if ext in ['jpg','jpeg','png','gif','webp'] %}
+                <img src="{{ url_for('static', filename='uploads/' ~ current_user.id ~ '/' ~ file.filename) }}" class="file-preview" alt="{{ file.filename }}">
+            {% else %}
+                <div class="file-icon">📄</div>
+            {% endif %}
 
-        {% set ext = file.filename.split('.')[-1].lower() %}
+            <p class="file-name">{{ file.filename }}</p>
 
-        <!-- IMAGE PREVIEW -->
-        {% if ext in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
-            <img src="{{ url_for('static', filename='uploads/' ~ current_user.id ~ '/' ~ file.filename) }}" class="file-preview">
+            <div class="file-menu">
+                <button type="button" class="menu-btn">⋮</button>
+                <div class="menu-content">
+                    <a href="{{ url_for('main.preview_file', file_id=file.id) }}" target="_blank">Preview</a>
+                    <a href="{{ url_for('main.download_file', file_id=file.id) }}">Download</a>
 
-        {% elif ext == 'pdf' %}
-            <div class="file-icon">📕</div>
+                    <button type="button" class="rename-btn">Rename</button>
+                    <form action="{{ url_for('main.rename_file', file_id=file.id) }}" method="POST" class="rename-form" style="display:none;">
+                        <input type="text" name="new_name" placeholder="New name" required>
+                        <div class="rename-actions">
+                            <button type="submit">OK</button>
+                            <button type="button" class="cancel-rename-btn">Cancel</button>
+                        </div>
+                    </form>
 
-        {% elif ext in ['doc', 'docx'] %}
-            <div class="file-icon">📘</div>
+                    <a href="{{ url_for('main.delete_file', file_id=file.id) }}">Delete</a>
+                </div>
+            </div>
 
-        {% elif ext in ['zip', 'rar'] %}
-            <div class="file-icon">🗜️</div>
-
-        {% elif ext in ['mp4', 'mkv'] %}
-            <div class="file-icon">🎬</div>
-
-        {% else %}
-            <div class="file-icon">📄</div>
-        {% endif %}
-
-        <p class="file-name">{{ file.filename }}</p>
-
-        <div class="file-actions">
-            <a href="{{ url_for('main.download_file', file_id=file.id) }}">⬇️</a>
-            <a href="{{ url_for('main.delete_file', file_id=file.id) }}">❌</a>
         </div>
+        {% else %}
+            <p>No files uploaded</p>
+        {% endfor %}
+        </div>
+    </section>
+    {% endif %}
 
-    </div>
+    <!-- UPLOAD FILES SECTION -->
+    {% if active == "upload" %}
+    <section id="upload-files">
+        <h3>Upload Files</h3>
+        <input type="file" id="fileInput" accept="*/*">
+        <button type="button" id="uploadBtn">Upload File</button>
+        <div id="progressContainer">
+            <div id="progressBar">0%</div>
+        </div>
+    </section>
+    {% endif %}
 
-{% else %}
-    <p>No files uploaded</p>
-{% endfor %}
-</div>
-        </section>
-
-        <!-- ===================== -->
-        <!-- UPLOAD SECTION -->
-        <!-- ===================== -->
-        {% elif active == "upload" %}
-        <section id="upload">
-            <h3>Upload Files</h3>
-
-            <input type="file" id="fileInput" required>
-<button onclick="uploadFile()">Upload</button>
-
-<div class="progress-container">
-    <div id="progressBar">0%</div>
-</div>
-
-        </section>
-
-        <!-- ===================== -->
-        <!-- AI DETECTION SECTION -->
-        <!-- ===================== -->
-        {% elif active == "aidetection" %}
-        <section id="aidetection">
-            <h3>AI Image Detection</h3>
-
-            <form action="/detect" method="POST" enctype="multipart/form-data">
-                <input type="file" name="image" accept="image/*" required>
-                <button type="submit">Detect</button>
-            </form>
-
-        </section>
+    <!-- AI DETECTION SECTION -->
+    {% if active == "aidetection" %}
+    <section id="ai-detection">
+        <h3>AI Detection</h3>
+        <form action="{{ url_for('main.ai_detection_page') }}" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Detect</button>
+        </form>
+        {% if result %}
+        <div class="detection-result">
+            <h4>Detection Result:</h4>
+            <p>{{ result }}</p>
+        </div>
         {% endif %}
+    </section>
+    {% endif %}
 
     </div>
-
 </div>
 
 </body>

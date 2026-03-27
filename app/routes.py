@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, current_app, send_file, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
+import cv2
+import numpy as np
 
 from .models import User, File
 from . import db
@@ -96,10 +98,16 @@ def upload_page():
     return render_template("dashboard.html", active="upload", user=current_user)
 
 
-@main.route("/aidetection")
+@main.route("/aidetection", methods=["GET", "POST"])
 @login_required
 def ai_detection_page():
-    return render_template("dashboard.html", active="aidetection", user=current_user)
+    result = None
+    if request.method == "POST":
+        image_file = request.files.get("image")
+        if image_file and image_file.filename != "":
+            # Process the image
+            result = detect_objects(image_file)
+    return render_template("dashboard.html", active="aidetection", user=current_user, result=result)
 
 
 # --------------------------
@@ -134,8 +142,7 @@ def upload_file():
     db.session.add(new_file)
     db.session.commit()
 
-    return redirect(url_for("main.dashboard"))
-from flask import send_file
+    return {"message": "File uploaded successfully"}, 200
 
 @main.route("/download/<int:file_id>")
 @login_required
@@ -145,6 +152,36 @@ def download_file(file_id):
     if file.user_id != current_user.id:
         return "Unauthorized"
 
+    return send_file(file.filepath, as_attachment=True)
+
+# --------------------------
+# FILE PREVIEW ROUTE
+# --------------------------
+@main.route("/preview/<int:file_id>")
+@login_required
+def preview_file(file_id):
+    file = File.query.get_or_404(file_id)
+
+    # 🔐 Security check
+    if file.user_id != current_user.id:
+        return "Unauthorized"
+
+    # ❌ File missing on disk
+    if not os.path.exists(file.filepath):
+        abort(404)
+
+    # ✅ Get file extension safely
+    ext = file.filename.rsplit(".", 1)[-1].lower()
+
+    # 🖼️ Image preview
+    if ext in ["png", "jpg", "jpeg", "gif", "webp"]:
+        return send_file(file.filepath)
+
+    # 📄 PDF preview
+    if ext == "pdf":
+        return send_file(file.filepath)
+
+    # 📁 Other files → download
     return send_file(file.filepath, as_attachment=True)
 @main.route("/delete/<int:file_id>")
 @login_required
@@ -160,6 +197,41 @@ def delete_file(file_id):
 
     # delete from DB
     db.session.delete(file)
+    db.session.commit()
+
+    return redirect(url_for("main.dashboard"))
+    # --------------------------
+# RENAME FILE ROUTE
+# --------------------------
+@main.route("/rename/<int:file_id>", methods=["POST"])
+@login_required
+def rename_file(file_id):
+    file = File.query.get_or_404(file_id)
+
+    # 🔐 Security check
+    if file.user_id != current_user.id:
+        return "Unauthorized"
+
+    new_name = request.form.get("new_name", "").strip()
+
+    if not new_name:
+        return redirect(url_for("main.dashboard"))
+
+    # keep extension
+    ext = file.filename.rsplit(".", 1)[-1]
+    new_filename = f"{new_name}.{ext}"
+
+    old_path = file.filepath
+    new_path = os.path.join(os.path.dirname(old_path), new_filename)
+
+    # rename file on disk
+    if os.path.exists(old_path):
+        os.rename(old_path, new_path)
+
+    # update DB
+    file.filename = new_filename
+    file.filepath = new_path
+
     db.session.commit()
 
     return redirect(url_for("main.dashboard"))
@@ -205,3 +277,33 @@ def update_profile():
 def logout():
     logout_user()
     return redirect(url_for("main.login"))
+
+
+# --------------------------  
+# AI DETECTION FUNCTION
+# --------------------------
+def detect_objects(image_file):
+    # Read image
+    image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Load Haar cascades
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    cat_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalcatface.xml')
+    
+    # Detect faces (humans)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    has_human = len(faces) > 0
+    
+    # Detect cat faces (animals)
+    cats = cat_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    has_animal = len(cats) > 0
+    
+    if has_human and has_animal:
+        return "Image contains both humans and animals (cats)."
+    elif has_human:
+        return "Image contains humans."
+    elif has_animal:
+        return "Image contains animals (cats)."
+    else:
+        return "No humans or cats detected in the image."
