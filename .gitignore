@@ -129,3 +129,6 @@ app/static/uploads/*
 *.tgz
 *.tar.bz2
 *.tar.xz
+
+
+*.tar
