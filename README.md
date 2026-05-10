@@ -103,6 +103,59 @@ Then run:
 python run.py
 ```
 
+## Offline / USB Transfer Setup
+
+To run the app on another machine without internet (or to avoid downloading large Docker images over a slow connection):
+
+### On the Machine with Internet (Build Machine)
+
+1. Build and run the stack locally first:
+
+```bash
+docker compose build --no-cache web
+docker compose up -d
+```
+
+2. Save the Docker images as tar files:
+
+```powershell
+docker save -o mark3-web.tar mark-3-cloud-web:latest
+docker save -o postgres-15.tar postgres:15
+```
+
+3. Copy the tar files and the entire project folder to a USB drive.
+
+### On the Target Machine (Without Internet)
+
+1. Ensure Docker Desktop is installed and running.
+
+2. Copy the project folder and tar files from USB to a local folder (e.g., `C:\mark3-cloud`).
+
+3. Load the Docker images:
+
+```powershell
+cd C:\mark3-cloud
+docker load -i mark3-web.tar
+docker load -i postgres-15.tar
+```
+
+4. Create a `.env` file (same as above):
+
+```env
+SECRET_KEY=your-secret-key
+DATABASE_URL=postgresql+psycopg2://postgres:password@db:5432/cloud_db
+```
+
+5. Start the stack **without building** (using the pre-loaded images):
+
+```bash
+docker compose up -d --no-build
+```
+
+6. Open the app at `http://localhost:5000`.
+
+**Note:** The first startup will take a moment as PostgreSQL initializes the database. After that, subsequent startups are much faster.
+
 ## Notes
 
 - Uploads are stored under `app/static/uploads/<user_id>/`.
