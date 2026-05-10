@@ -22,7 +22,7 @@
 
             <!-- Password input -->
             <div class="password-box">
-                <input type="password" id="password" class="signup-input" name="password" placeholder="Password" required minlength="9" pattern="(?=.*[a-zA-Z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{9,}" title="Password must be at least 9 characters and include a number, a letter, an uppercase letter, and a symbol.">
+                <input type="password" id="password" class="signup-input" name="password" placeholder="Password" required minlength="9" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{9,}" title="Password must be at least 9 characters and include lowercase, uppercase, a number, and a symbol.">
                 <span class="toggle-password" onclick="togglePassword('password')">👁</span>
             </div>
 
@@ -32,7 +32,7 @@
                 <span class="toggle-password" onclick="togglePassword('repassword')">👁</span>
             </div>
 
-            <p class="password-policy">At least 9 characters, with a number, a letter, one uppercase letter, and a symbol.</p>
+            <p class="password-policy">At least 9 characters, include lowercase, uppercase, number, and a symbol (e.g. Test@1234).</p>
 
             <!-- Submit button -->
             <button type="submit" class="signup-button">Sign Up</button>

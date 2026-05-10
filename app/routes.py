@@ -12,7 +12,7 @@ from . import db
 main = Blueprint("main", __name__)
 
 IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "bmp", "tif", "tiff"}
-PASSWORD_POLICY_MESSAGE = "Password must be at least 9 characters and include a number, a letter, an uppercase letter, and a symbol."
+PASSWORD_POLICY_MESSAGE = "Password must be at least 9 characters and include lowercase, uppercase, a number, and a symbol."
 
 
 # --------------------------
@@ -332,12 +332,12 @@ def validate_password_policy(password):
     if len(password) < 9:
         return PASSWORD_POLICY_MESSAGE
 
-    has_letter = any(character.isalpha() for character in password)
+    has_lowercase = any(character.islower() for character in password)
     has_uppercase = any(character.isupper() for character in password)
     has_number = any(character.isdigit() for character in password)
     has_symbol = any(not character.isalnum() for character in password)
 
-    if not (has_letter and has_uppercase and has_number and has_symbol):
+    if not (has_lowercase and has_uppercase and has_number and has_symbol):
         return PASSWORD_POLICY_MESSAGE
 
     return None

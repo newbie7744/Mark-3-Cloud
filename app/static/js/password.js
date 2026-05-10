@@ -15,13 +15,12 @@ function validatePasswordPolicy(password) {
     if (password.length < 9) {
         return false;
     }
-
-    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
     const hasUppercase = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
-    return hasLetter && hasUppercase && hasNumber && hasSymbol;
+    return hasLowercase && hasUppercase && hasNumber && hasSymbol;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -33,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (passwordField && !validatePasswordPolicy(passwordField.value)) {
                 event.preventDefault();
-                alert("Password must be at least 9 characters and include a number, a letter, an uppercase letter, and a symbol.");
+                alert("Password must be at least 9 characters and include lowercase, uppercase, a number, and a symbol.");
                 return;
             }
 
