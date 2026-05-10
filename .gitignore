@@ -122,3 +122,10 @@ dmypy.json
 # Ignore all uploaded files
 app/static/uploads/*
 !app/static/uploads/.gitkeep
+
+
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
