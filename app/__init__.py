@@ -3,6 +3,7 @@ import time
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from sqlalchemy import inspect, text
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -39,5 +40,15 @@ def create_app():
     with app.app_context():
         time.sleep(3)
         db.create_all()
+        ensure_schema_updates()
 
     return app
+
+
+def ensure_schema_updates():
+    inspector = inspect(db.engine)
+    columns = {column["name"] for column in inspector.get_columns("file")}
+
+    if "classification" not in columns:
+        db.session.execute(text("ALTER TABLE file ADD COLUMN classification VARCHAR(32)"))
+        db.session.commit()

@@ -11,6 +11,9 @@ from . import db
 
 main = Blueprint("main", __name__)
 
+IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "bmp", "tif", "tiff"}
+PASSWORD_POLICY_MESSAGE = "Password must be at least 9 characters and include a number, a letter, an uppercase letter, and a symbol."
+
 
 # --------------------------
 # LOGIN ROUTE
@@ -52,6 +55,10 @@ def signup():
         if password != retyped:
             return "Passwords do not match"
 
+        password_error = validate_password_policy(password)
+        if password_error:
+            return password_error
+
         if User.query.filter_by(email=email).first():
             return "Email already registered"
 
@@ -89,6 +96,15 @@ def signup():
 @login_required
 def dashboard():
     files = File.query.filter_by(user_id=current_user.id).all()
+    updated = False
+    for file in files:
+        if not file.classification and os.path.exists(file.filepath) and is_image_file(file.filename):
+            file.classification = classify_image_file(file.filepath)
+            updated = True
+
+    if updated:
+        db.session.commit()
+
     return render_template("dashboard.html", active="myfiles", user=current_user, files=files)
 
 
@@ -107,7 +123,7 @@ def ai_detection_page():
         if image_file and image_file.filename != "":
             # Process the image
             result = detect_objects(image_file)
-    return render_template("dashboard.html", active="aidetection", user=current_user, result=result)
+    return render_template("dashboard.html", active="myfiles", user=current_user, result=result)
 
 
 # --------------------------
@@ -116,12 +132,15 @@ def ai_detection_page():
 @main.route("/upload_file", methods=["POST"])
 @login_required
 def upload_file():
-    file = request.files.get("file")
+    files = request.files.getlist("files")
+    if not files:
+        single_file = request.files.get("file")
+        if single_file:
+            files = [single_file]
 
-    if not file or file.filename == "":
+    files = [uploaded_file for uploaded_file in files if uploaded_file and uploaded_file.filename != ""]
+    if not files:
         return "No file selected"
-
-    filename = secure_filename(file.filename)
 
     # ✅ user folder
     user_folder = os.path.join(
@@ -130,19 +149,49 @@ def upload_file():
     )
     os.makedirs(user_folder, exist_ok=True)
 
-    filepath = os.path.join(user_folder, filename)
-    file.save(filepath)
+    uploaded_records = []
 
-    new_file = File(
-        filename=filename,
-        filepath=filepath,
-        user_id=current_user.id
-    )
+    for uploaded_file in files:
+        original_name = uploaded_file.filename.replace("\\", "/")
+        safe_parts = []
+        for part in original_name.split("/"):
+            safe_part = secure_filename(part)
+            if safe_part:
+                safe_parts.append(safe_part)
 
-    db.session.add(new_file)
+        if not safe_parts:
+            continue
+
+        stored_relative_path = os.path.join(*safe_parts)
+        file_directory = os.path.join(user_folder, *safe_parts[:-1]) if len(safe_parts) > 1 else user_folder
+        os.makedirs(file_directory, exist_ok=True)
+
+        filepath = os.path.join(user_folder, stored_relative_path)
+        uploaded_file.save(filepath)
+
+        classification = None
+        if is_image_file(safe_parts[-1]):
+            classification = classify_image_file(filepath)
+
+        new_file = File(
+            filename=stored_relative_path,
+            filepath=filepath,
+            classification=classification,
+            user_id=current_user.id
+        )
+
+        db.session.add(new_file)
+        uploaded_records.append({
+            "filename": stored_relative_path,
+            "classification": classification
+        })
+
     db.session.commit()
 
-    return {"message": "File uploaded successfully"}, 200
+    return {
+        "message": f"{len(uploaded_records)} file(s) uploaded successfully",
+        "uploaded": uploaded_records,
+    }, 200
 
 @main.route("/download/<int:file_id>")
 @login_required
@@ -279,31 +328,86 @@ def logout():
     return redirect(url_for("main.login"))
 
 
+def validate_password_policy(password):
+    if len(password) < 9:
+        return PASSWORD_POLICY_MESSAGE
+
+    has_letter = any(character.isalpha() for character in password)
+    has_uppercase = any(character.isupper() for character in password)
+    has_number = any(character.isdigit() for character in password)
+    has_symbol = any(not character.isalnum() for character in password)
+
+    if not (has_letter and has_uppercase and has_number and has_symbol):
+        return PASSWORD_POLICY_MESSAGE
+
+    return None
+
+
+# --------------------------
+# IMAGE CLASSIFICATION HELPERS
+# --------------------------
+def is_image_file(filename):
+    if not filename or "." not in filename:
+        return False
+    extension = filename.rsplit(".", 1)[-1].lower()
+    return extension in IMAGE_EXTENSIONS
+
+
+def classify_image_file(image_path):
+    with open(image_path, "rb") as image_handle:
+        image_bytes = image_handle.read()
+
+    return classify_image_bytes(image_bytes)
+
+
+def classify_image_bytes(image_bytes):
+    return classify_with_cascades(image_bytes)
+
+
+def classify_with_cascades(image_bytes):
+    try:
+        import cv2
+    except Exception:
+        return "Unknown"
+
+    image_array = np.frombuffer(image_bytes, dtype=np.uint8)
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    if image is None:
+        return "Unknown"
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+    )
+    faces = face_cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=6,
+        minSize=(40, 40),
+    )
+
+    if len(faces) > 0:
+        return "Human"
+
+    upper_body_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_upperbody.xml"
+    )
+    bodies = upper_body_cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=7,
+        minSize=(60, 60),
+    )
+
+    if len(bodies) > 0:
+        return "Human"
+
+    return "Non-human"
+
+
 # --------------------------  
 # AI DETECTION FUNCTION
 # --------------------------
 def detect_objects(image_file):
-    # Read image
-    image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # Load Haar cascades
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    cat_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalcatface.xml')
-    
-    # Detect faces (humans)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    has_human = len(faces) > 0
-    
-    # Detect cat faces (animals)
-    cats = cat_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    has_animal = len(cats) > 0
-    
-    if has_human and has_animal:
-        return "Image contains both humans and animals (cats)."
-    elif has_human:
-        return "Image contains humans."
-    elif has_animal:
-        return "Image contains animals (cats)."
-    else:
-        return "No humans or cats detected in the image."
+    return classify_image_bytes(image_file.read())

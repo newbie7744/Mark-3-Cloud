@@ -67,14 +67,19 @@ function updateTime() {
 // =======================
 function uploadFile() {
     const fileInput = document.getElementById("fileInput");
-    const file = fileInput.files[0];
-    if (!file) {
-        alert("Please select a file");
+    const files = Array.from(fileInput.files || []);
+    if (files.length === 0) {
+        alert("Please select one or more files");
         return;
     }
 
     const formData = new FormData();
-    formData.append("file", file);
+    files.forEach(file => {
+        const relativeName = file.webkitRelativePath && file.webkitRelativePath.length > 0
+            ? file.webkitRelativePath
+            : file.name;
+        formData.append("files", file, relativeName);
+    });
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/upload_file", true);
@@ -92,7 +97,7 @@ function uploadFile() {
         if (xhr.status === 200) {
             try {
                 const response = JSON.parse(xhr.responseText);
-                if (response.message === "File uploaded successfully") {
+                if (response.message && response.message.indexOf("uploaded successfully") !== -1) {
                     window.location.href = "/dashboard";
                 } else {
                     alert("Upload failed: " + (response.message || "Unknown error"));

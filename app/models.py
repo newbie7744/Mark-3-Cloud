@@ -26,4 +26,6 @@ class File(db.Model):
 
     filepath = db.Column(db.String(300), nullable=False)
 
+    classification = db.Column(db.String(32))
+
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

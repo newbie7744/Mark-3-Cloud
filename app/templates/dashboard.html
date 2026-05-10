@@ -17,7 +17,6 @@
     <ul>
         <li class="{{ 'active' if active == 'myfiles' else '' }}"><a href="{{ url_for('main.dashboard') }}">My Files</a></li>
         <li class="{{ 'active' if active == 'upload' else '' }}"><a href="{{ url_for('main.upload_page') }}">Upload Files</a></li>
-        <li class="{{ 'active' if active == 'ai_detection' else '' }}"><a href="{{ url_for('main.ai_detection_page') }}">AI Detection</a></li>
         <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
     </ul>
 </div>
@@ -68,6 +67,9 @@
             {% set ext = file.filename.split('.')[-1].lower() %}
             {% if ext in ['jpg','jpeg','png','gif','webp'] %}
                 <img src="{{ url_for('static', filename='uploads/' ~ current_user.id ~ '/' ~ file.filename) }}" class="file-preview" alt="{{ file.filename }}">
+                {% if file.classification %}
+                    <div class="classification-badge {{ file.classification|lower|replace(' ', '-') }}">{{ file.classification }}</div>
+                {% endif %}
             {% else %}
                 <div class="file-icon">📄</div>
             {% endif %}
@@ -105,28 +107,12 @@
     {% if active == "upload" %}
     <section id="upload-files">
         <h3>Upload Files</h3>
-        <input type="file" id="fileInput" accept="*/*">
-        <button type="button" id="uploadBtn">Upload File</button>
+        <input type="file" id="fileInput" accept="*/*" multiple webkitdirectory>
+        <p class="upload-help">Select one or more files, or choose a folder to keep its structure.</p>
+        <button type="button" id="uploadBtn">Upload Files</button>
         <div id="progressContainer">
             <div id="progressBar">0%</div>
         </div>
-    </section>
-    {% endif %}
-
-    <!-- AI DETECTION SECTION -->
-    {% if active == "aidetection" %}
-    <section id="ai-detection">
-        <h3>AI Detection</h3>
-        <form action="{{ url_for('main.ai_detection_page') }}" method="POST" enctype="multipart/form-data">
-            <input type="file" name="image" accept="image/*" required>
-            <button type="submit">Detect</button>
-        </form>
-        {% if result %}
-        <div class="detection-result">
-            <h4>Detection Result:</h4>
-            <p>{{ result }}</p>
-        </div>
-        {% endif %}
     </section>
     {% endif %}
 
